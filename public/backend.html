@@ -1,0 +1,40 @@
+<html>
+
+<head>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+  <!-- <script src="clappr-chromecast-plugin.js"></script> -->
+  <script type="text/javascript"
+    src="https://cdn.jsdelivr.net/clappr.level-selector/latest/level-selector.min.js"></script>
+
+</head>
+
+<body>
+
+  <div id="player" class='full-width'></div>
+  <script>
+
+
+    (function (open) {
+
+      XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
+        if (url.indexOf('https://mf.svc.nhl.com') != -1) {
+          rewrittenUrl = url.replace("https://mf.svc.nhl.com", "https://nhl.freegamez.ga");
+        } else { rewrittenUrl = url; }
+        open.call(this, method, rewrittenUrl, async, user, pass);
+      };
+    })(XMLHttpRequest.prototype.open);
+
+    var data = { source: null }
+    var player = new Clappr.Player({
+      mimeType: "application/x-mpegURL",
+      autoPlay: false,
+      autoSeekFromUrl: true,
+      width: "100%",
+      parentId: "#player",
+      plugins: { 'core': [LevelSelector] }
+    });
+  </script>
+
+</body>
+
+</html>

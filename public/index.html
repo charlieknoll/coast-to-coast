@@ -1,0 +1,114 @@
+<html>
+
+<head>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+  <!-- <script src="clappr-chromecast-plugin.js"></script> -->
+  <script type="text/javascript"
+    src="https://cdn.jsdelivr.net/clappr.level-selector/latest/level-selector.min.js"></script>
+  <style>
+    .item {
+      width: 100%;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      background-color: DodgerBlue;
+    }
+
+    button {
+      background-color: #f1f1f1;
+      /* margin: 10px; */
+      padding: 20px;
+      font-size: 100px;
+      flex: 0 50%;
+      height: 20vh;
+    }
+
+    button {
+      padding: 15px;
+      font-size: 50px;
+    }
+
+    @media (min-height: 550px) {
+      button {
+        padding: 20px;
+        font-size: 100px;
+      }
+    }
+
+
+    .full-width {
+      flex-basis: 100%;
+
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div id="player" class='full-width'></div>
+  <div id='container' class='container'>
+    <button class='item' data-path='back5'>5s &lt;</button>
+    <button class='item' data-path='seek/5'>5s ></button>
+    <button class='item' data-path='back30'>30s &lt;</button>
+    <button class='item' data-path='seek/30'>30s ></button>
+    <button class='item' data-path='back2m'>2m &lt;</button>
+    <button class='item' data-path='skip2m'>2m ></button>
+    <button class='item' data-path='back15m'>15m &lt;</button>
+    <button class='item' data-path='skip15m'>15m ></button>
+  </div>
+  <script>
+
+
+    [].slice.call(document.getElementsByClassName('item')).map(i => {
+      i.onclick = async function (e) {
+        e.preventDefault();
+        const path = e.target.dataset.path
+        const response = await fetch(window.location.href + 'player/' + path)
+        if (response.status != 200) window.location.reload()
+      }
+    });
+    (function (open) {
+
+      XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
+        // if (url.indexOf('key/silk/mediaid/') != -1) {
+        //   rewrittenUrl = url.replace("https://mf.svc.nhl.com/ws/media/mf/v2.3/key/silk/mediaid/", "http://yrsprts.xyz/hls/nhl.php?t=7&url=");
+        // } else { rewrittenUrl = url; }
+        if (url.indexOf('https://mf.svc.nhl.com') != -1) {
+          rewrittenUrl = url.replace("https://mf.svc.nhl.com", "https://nhl.freegamez.ga");
+        } else { rewrittenUrl = url; }
+        open.call(this, method, rewrittenUrl, async, user, pass);
+      };
+    })(XMLHttpRequest.prototype.open);
+
+    var mustave = 'https://hlslive-akc.med2.med.nhl.com/hdnts=exp=1576198804~acl=/*~id=nhlGatewayId:8436302~data=70341003~hmac=6d5c0a2faf3248a9c71ce9098ad2b28012e07b0451fa58a8dd08d3a2a5a70fbd/7fdc1ac6b5d553d39a9121d9ac416a1b/ls03/nhl/2019/12/12/NHL_GAME_VIDEO_BOSWSH_M2_NATIONAL_20191212_1574366114643/master_wired60.m3u8'
+    var data = { source: mustave }
+    var player = new Clappr.Player({
+      source: data.source, mimeType: "application/x-mpegURL",
+      autoPlay: true,
+      autoSeekFromUrl: true,
+      width: "100%",
+      //mediacontrol: { seekbar: "#607d8b", buttons: "#607d8b" }, preload: 'metadata', actualLiveTime: true, parentId: "#player"
+      //mediacontrol: { seekbar: "#607d8b", buttons: "#607d8b" }, preload: 'metadata', actualLiveTime: true,
+      parentId: "#player",
+      plugins: { 'core': [LevelSelector] }
+      // plugins: [ChromecastPlugin],
+      // chromecast: {
+      //   appId: '9DFB77C0',
+      //   contentType: 'application/x-mpegurl',
+      //   media: {
+      //     type: ChromecastPlugin.None,
+      //     title: 'Coast to Coast',
+      //     subtitle: 'NHL Live and Replay'
+      //   }
+      // }
+    });
+
+  </script>
+
+</body>
+
+</html>

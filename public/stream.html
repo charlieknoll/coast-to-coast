@@ -1,0 +1,66 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href="stylesheets/style.css" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+</head>
+
+<body>
+
+  <div id="player" class='full-width'></div>
+  <div id='container' class='remote-container'>
+    <button class='item remote-button media-control' data-path='fullscreen'><svg xmlns="http://www.w3.org/2000/svg"
+        data-path='fullscreen' viewBox="0 0 16 16">
+        <path data-path='fullscreen' fill="#010101"
+          d="M7.156 8L4 11.156V8.5H3V13h4.5v-1H4.844L8 8.844 7.156 8zM8.5 3v1h2.657L8 7.157 8.846 8 12 4.844V7.5h1V3H8.5z">
+        </path>
+      </svg></button>
+    <button class='item remote-button' data-path='seek/5'>5s ></button>
+    <button class='item remote-button' data-path='seek/-10'>10s &lt;</button>
+    <button class='item remote-button' data-path='seek/20'>20s ></button>
+    <button class='item remote-button' data-path='seek/-120'>2m &lt;</button>
+    <button class='item remote-button' data-path='seek/120'>2m ></button>
+    <button class='item remote-button' data-path='seek-percentage/100'>LIVE</button>
+    <button class='item remote-button' data-path='seek/1020'>17m ></button>
+  </div>
+  <!--Copy below to remote.html-->
+  <div id="gameHeader" class="text-center mt-2 loading"><a href="#" id="prevDate"><i class="fa fa-arrow-left"
+        aria-hidden="true"></i></a> <span class="ml-5 mr-5" data-bind="text: scheduleDate"></span> <a href="#"
+      id="nextDate"><i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+  </div>
+  <div id="loading" class="text-center mt-2 loading">LOADING...</div>
+  <div id="gameList" class='full-width game-list' data-bind="foreach: games">
+    <div class='card'>
+      <div class="card-body">
+        <span data-bind="text: teams.away.team.name"></span> <small
+          data-bind="text: teams.away.team.record"></small><br>
+
+        <img class='logo' data-bind="attr: {src: teams.away.team.logo}">
+        vs.
+        <img class='logo' data-bind="attr: {src: teams.home.team.logo}">
+        <br><span data-bind="text: teams.home.team.name"></span> <small
+          data-bind="text: teams.home.team.record"></small><br>
+        <span data-bind="text: venue.name"></span> @ <span data-bind="text: gameDateStr"></span>
+
+        <div class='' data-bind="foreach: feeds">
+          <a href="" class="btn btn-primary m-2 media-link"
+            data-bind="attr: { 'data-playback-id': mediaPlaybackId}, text: mediaFeedType, click: $parents[1].playFeed"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+  <!-- <script src="clappr-chromecast-plugin.js"></script> -->
+  <script type="text/javascript"
+    src="https://cdn.jsdelivr.net/clappr.level-selector/latest/level-selector.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+  <script type="text/javascript" src="javascripts/moment.js"></script>
+  <script type="text/javascript" src="player-local.js"></script>
+  <script type="text/javascript" src="view-model.js"></script>
+
+</body>
+
+</html>

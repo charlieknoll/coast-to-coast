@@ -1,0 +1,67 @@
+    body {
+      background-color: #6f263d;
+    }
+
+    .remote-container {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+    }
+
+    .remote-button {
+      background-color: #f1f1f1;
+      /* margin: 10px; */
+      padding: 8px;
+      font-size: 64px;
+      flex: 0 50%;
+      height: 10vh;
+      width: 100%;
+    }
+    @media only screen and (max-height: 750px) and (orientation: landscape) {
+      .remote-button {
+        height: 20vh;
+      }
+    }
+    .media-control svg {
+      height:96px;
+
+    }
+
+
+    .full-width {
+      flex-basis: 100%;
+
+    }
+    .game-list {
+      text-align: center;
+      font-size: 48px;
+    }
+    .media-link {
+      color: white;
+
+    }
+    .game-list .btn {
+      font-size: 36px;
+    }
+    .game-list small {
+      font-size: .5em;
+      color: grey;
+    }
+    .logo {
+      width: 300
+    }
+    .game-list .card {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .loading {
+      color: white;
+      font-size: 4em;
+    }
+    a {
+      color: white;
+    }
+    a:hover {
+      color: white;
+    }
+
