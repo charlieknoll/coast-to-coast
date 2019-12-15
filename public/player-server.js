@@ -12,5 +12,11 @@ var playerProxy = {
     if (response.status != 200) console.log('Error occurred on getting time')
     var time = await response.text();
     return time.replace('time:', ''); //I had to do this because express was interpreting the numeric time as a status code
+  },
+  getDevice: async function () {
+    const response = await fetch(window.location.origin + '/player/device')
+    if (response.status != 200) console.log('Error occurred on getting device')
+    var device = await response.text();
+    return device.replace('device:', ''); //I had to do this because express was interpreting the numeric time as a status code
   }
 }

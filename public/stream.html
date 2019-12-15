@@ -1,6 +1,7 @@
 <html>
 
 <head>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link href="stylesheets/style.css" rel="stylesheet">
@@ -12,13 +13,6 @@
 
   <div id="player" class='full-width'></div>
   <div id='container' class='remote-container'>
-    <button class='item remote-button media-control' data-path='fullscreen'><svg xmlns="http://www.w3.org/2000/svg"
-        data-path='fullscreen' viewBox="0 0 16 16">
-        <path data-path='fullscreen' fill="#010101"
-          d="M7.156 8L4 11.156V8.5H3V13h4.5v-1H4.844L8 8.844 7.156 8zM8.5 3v1h2.657L8 7.157 8.846 8 12 4.844V7.5h1V3H8.5z">
-        </path>
-      </svg></button>
-    <button class='item remote-button' data-path='seek/5'>5s ></button>
     <button class='item remote-button' data-path='seek/-10'>10s &lt;</button>
     <button class='item remote-button' data-path='seek/20'>20s ></button>
     <button class='item remote-button' data-path='seek/-120'>2m &lt;</button>
@@ -31,16 +25,20 @@
         aria-hidden="true"></i></a> <span class="ml-5 mr-5" data-bind="text: scheduleDate"></span> <a href="#"
       id="nextDate"><i class="fa fa-arrow-right" aria-hidden="true"></i></a>
   </div>
-  <div id="loading" class="text-center mt-2 loading">LOADING...</div>
+  <div id="loading" class="text-center mt-2 loading">LOADING...<br>
+    <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+  </div>
   <div id="gameList" class='full-width game-list' data-bind="foreach: games">
     <div class='card'>
       <div class="card-body">
         <span data-bind="text: teams.away.team.name"></span> <small
           data-bind="text: teams.away.team.record"></small><br>
 
-        <img class='logo' data-bind="attr: {src: teams.away.team.logo}">
-        vs.
-        <img class='logo' data-bind="attr: {src: teams.home.team.logo}">
+        <a class="labelText" target="nhlEditorial" data-bind="attr: {href: editorialUrl}"><img class='logo'
+            data-bind="attr: {src: teams.away.team.logo, 'data-teamid': teams.away.team.id}">
+          vs.
+          <img class='logo' data-bind="attr: {src: teams.home.team.logo, 'data-teamid': teams.home.team.id}">
+        </a>
         <br><span data-bind="text: teams.home.team.name"></span> <small
           data-bind="text: teams.home.team.record"></small><br>
         <span data-bind="text: venue.name"></span> @ <span data-bind="text: gameDateStr"></span>

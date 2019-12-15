@@ -27,6 +27,24 @@ router.get('/current-time', asyncHandler(async function (req, res, next) {
   const result = await playerController.currentTime()
   res.send('time:' + result)
 }));
-
+router.get('/toggle', asyncHandler(async function (req, res, next) {
+  await playerController.toggle()
+  res.writeHead(200)
+  res.end()
+}));
+router.get('/cast/:d', asyncHandler(async function (req, res, next) {
+  await playerController.cast(req.params.d)
+  res.writeHead(200)
+  res.end()
+}));
+router.get('/reset', asyncHandler(async function (req, res, next) {
+  await playerController.reset()
+  res.writeHead(200)
+  res.end()
+}));
+router.get('/device', asyncHandler(async function (req, res, next) {
+  const result = await playerController.device()
+  res.send('device:' + result)
+}));
 
 module.exports = router;

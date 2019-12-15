@@ -24,10 +24,6 @@ var playerProxy = {
       player.isPlaying() ? player.pause() : player.play();
       return
     }
-    if (action.substring(0, 4) == 'full') {
-      if (window.player.core.toggleFullScreen) window.player.core.toggleFullScreen();
-      return
-    }
   },
   load: function (url, t) {
     player.load(url, false)
@@ -69,6 +65,7 @@ function init() {
     width: dimensions.width,
     height: dimensions.height,
     parentId: "#player",
+    poster: "https://charlieknoll.github.io/coast2coast/images/poster.jpg",
     plugins: { 'core': [LevelSelector] }
   });
 }

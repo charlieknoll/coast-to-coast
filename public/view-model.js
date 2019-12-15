@@ -2,6 +2,9 @@ function ViewModel() {
   this.baseUrl = 'https://statsapi.web.nhl.com/api/v1/';
   this.games = ko.observable();
   this.currentPlaybackId = null;
+  this.currentGame = null;
+  this.devices = [1, 2, 3, 4];
+  this.device = ko.observable(-1)
   this.dateOffset = ko.observable(0);
   this.scheduleDate = ko.computed(function () {
     return moment().add(this.dateOffset(), 'days').format('MMM Do')
@@ -15,10 +18,17 @@ function ViewModel() {
     const localStorageCache = window.localStorage.getItem('playbackCache')
     if (localStorageCache) this.playbackCache = JSON.parse(localStorageCache);
 
-    [].slice.call(document.getElementsByClassName('item')).map(i => {
+    [].slice.call(document.getElementsByClassName('remote-button')).map(i => {
       i.onclick = async function (e) {
         e.preventDefault();
-        const path = e.target.dataset.path
+        let path = e.target.dataset.path
+        if (!path) path = e.target.parentNode.dataset.path
+        if (!path) path = e.target.parentNode.parentNode.dataset.path
+
+        if (path == 'restart' && viewModel.currentGame) {
+          const currentTime = await playerProxy.getCurrentTime()
+          path = viewModel.currentGame.mediaState == 'MEDIA_ON' ? 'seek/' + (3600 - currentTime) : 'seek-percentage/0'
+        }
         await playerProxy.exec(path)
       }
     });
@@ -32,8 +42,12 @@ function ViewModel() {
     }
     await this.loadSchedule()
     window.setInterval(async function () {
+      if (playerProxy.getDevice) {
+        viewModel.device(await playerProxy.getDevice())
+      }
       if (!viewModel.currentPlaybackId) return
-      viewModel.playbackCache[viewModel.currentPlaybackId] = await playerProxy.getCurrentTime()
+      const time = parseInt(await playerProxy.getCurrentTime())
+      if (time > 0) viewModel.playbackCache[viewModel.currentPlaybackId] = time;
       window.localStorage.setItem('playbackCache', JSON.stringify(viewModel.playbackCache));
 
     }, 2000)
@@ -75,6 +89,10 @@ function ViewModel() {
           })
         }
       }
+      games[i].editorialUrl = game.editorial.preview.items[0] ? game.editorial.preview.items[0].url : null
+      games[i].editorialUrl = game.editorial.recap.items[0] ? game.editorial.recap.items[0].url : games[i].editorialUrl
+      games[i].editorialUrl = 'https://www.nhl.com/' + games[i].editorialUrl
+
     }
     this.games(games)
     document.getElementById('gameList').style.display = 'initial'
@@ -109,8 +127,9 @@ function ViewModel() {
       viewModel.playbackCache[viewModel.currentPlaybackId] = await playerProxy.getCurrentTime()
     }
     //if live start at 50 minutes from start of live feed
-    playerProxy.load(e.url, viewModel.playbackCache[e.mediaPlaybackId] ? viewModel.playbackCache[e.mediaPlaybackId] : (e.gameType != 'R' ? 3600 : 0))
+    playerProxy.load(e.url, viewModel.playbackCache[e.mediaPlaybackId] ? viewModel.playbackCache[e.mediaPlaybackId] : (e.mediaState == 'MEDIA_ON' ? 3600 : 0))
     viewModel.currentPlaybackId = e.mediaPlaybackId;
+    viewModel.currentGame = e
     window.localStorage.setItem('playbackCache', JSON.stringify(viewModel.playbackCache));
 
   };
