@@ -69,7 +69,17 @@ function init() {
     height: dimensions.height,
     parentId: "#player",
     poster: "https://charlieknoll.github.io/coast2coast/images/poster.jpg",
-    plugins: { 'core': [LevelSelector] }
+    //plugins: { 'core': [LevelSelector] }
+    plugins: [ChromecastPlugin, LevelSelector],
+    chromecast: {
+      appId: '9DFB77C0',
+      contentType: 'application/x-mpegurl',
+      media: {
+        type: ChromecastPlugin.None,
+        title: 'Coast to Coast',
+        subtitle: 'NHL Live and Replay'
+      }
+    }
   });
 }
 
