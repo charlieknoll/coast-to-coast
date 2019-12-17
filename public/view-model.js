@@ -5,13 +5,40 @@ function ViewModel() {
   this.currentGame = null;
   this.devices = [1, 2, 3, 4];
   this.device = ko.observable(-1)
-  this.dateOffset = ko.observable(0);
-  this.scheduleDate = ko.computed(function () {
-    return moment().add(this.dateOffset(), 'days').format('MMM Do')
-  }, this);
-  this.scheduleDateParam = function () {
-    return moment().add(this.dateOffset(), 'days').format('YYYY-MM-DD')
+  this.scheduleDateParam = ko.observable(new moment().format('YYYY-MM-DD'));
+  this.status = ko.observable({ castDevice: 0, currentTime: 0, duration: 0, isPlaying: false })
+  this.currentTime = ko.computed(function () {
+    function pad(num) {
+      return ("0" + num).slice(-2);
+    }
+    function hhmmss(secs) {
+      var minutes = Math.floor(secs / 60);
+      secs = secs % 60;
+      var hours = Math.floor(minutes / 60)
+      minutes = minutes % 60;
+      return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
+      // return pad(hours)+":"+pad(minutes)+":"+pad(secs); for old browsers
+    }
+    function mmss(secs) {
+      var minutes = Math.floor(secs / 60);
+      secs = secs % 60;
+      minutes = minutes % 60;
+      return `${pad(minutes)}:${pad(secs)}`;
+      // return pad(hours)+":"+pad(minutes)+":"+pad(secs); for old browsers
+    }
+    if (this.status().duration > 3599) {
+      return hhmmss(this.status().currentTime) + ' | ' + hhmmss(this.status().duration)
+    }
+    return mmss(this.status().currentTime) + ' | ' + mmss(this.status().duration)
+
+  }, this)
+  this.incDate = async function (n) {
+    viewModel.scheduleDateParam(moment(viewModel.scheduleDateParam()).add(n, 'days').format('YYYY-MM-DD'))
+    await this.loadSchedule()
   };
+  this.scheduleDate = ko.computed(function () {
+    return moment(this.scheduleDateParam()).format('MMM Do')
+  }, this);
   this.playbackCache = {};
   this.init = async function () {
     console.log('init');
@@ -26,12 +53,20 @@ function ViewModel() {
         if (!path) path = e.target.parentNode.parentNode.dataset.path
 
         if (path == 'restart' && viewModel.currentGame) {
-          const currentTime = await playerProxy.getCurrentTime()
-          path = viewModel.currentGame.mediaState == 'MEDIA_ON' ? 'seek/' + (3600 - currentTime) : 'seek-percentage/0'
+          path = viewModel.currentGame.mediaState == 'MEDIA_ON' ? 'seek/3600' : 'seek-percentage/0'
         }
         await playerProxy.exec(path)
       }
     });
+    //this.avsGames = [{ date: '2019-12-16', team: 'St. Louis Blues', home: false, teamId: 5 }]
+    document.getElementById('scheduleDate').onclick = function (e) {
+      $('.date-picker').datepicker('show')
+    }
+    document.getElementById('datePicker').onchange = async function (e) {
+      const newDate = new moment(e.target.value).format('YYYY-MM-DD')
+      viewModel.scheduleDateParam(newDate)
+      await viewModel.loadSchedule()
+    }
     document.getElementById('prevDate').onclick = async function (e) {
       e.preventDefault();
       await viewModel.incDate(-1)
@@ -40,27 +75,36 @@ function ViewModel() {
       e.preventDefault();
       await viewModel.incDate(1)
     }
+    await this.setAvsSchedule()
     await this.loadSchedule()
-    window.setInterval(async function () {
-      if (playerProxy.getDevice) {
-        viewModel.device(await playerProxy.getDevice())
+    $('.date-picker').datepicker({
+      autoclose: true,
+      orientation: 'bottom',
+      format: 'yyyy-mm-dd',
+      beforeShowDay: function (date) {
+        const game = viewModel.avsGames.find(g => g.date == new moment(date).format("YYYY-MM-DD"))
+        if (game) {
+          return game.home.teamId == 21 ? { classes: 'home-game team-icon-' + game.away.teamId, tooltip: game.away.name } :
+            { classes: 'away-game team-icon-' + game.home.teamId, tooltip: game.home.name }
+        }
+
       }
+    });
+    window.setInterval(async function () {
+      viewModel.status(await playerProxy.getStatus())
       if (!viewModel.currentPlaybackId) return
-      const time = parseInt(await playerProxy.getCurrentTime())
-      if (time > 0) viewModel.playbackCache[viewModel.currentPlaybackId] = time;
+      if (viewModel.status().currentTime > 0) viewModel.playbackCache[viewModel.currentPlaybackId] = viewModel.status().currentTime;
       window.localStorage.setItem('playbackCache', JSON.stringify(viewModel.playbackCache));
 
-    }, 2000)
+    }, 1000)
 
     // const avsGame = this.games().find((g) => g.teams.away.team.id === 21 || g.teams.home.team.id === 21)
   };
-  this.incDate = async function (n) {
-    this.dateOffset(n + this.dateOffset())
-    await this.loadSchedule()
-  };
   this.loadSchedule = async function () {
     document.getElementById('gameList').style.display = 'none'
+    document.getElementById('gameHeader').style.display = 'none'
     document.getElementById('loading').style.display = ''
+
     const schedule = await this.getSchedule()
     const games = schedule.dates[0].games
     for (var i = 0; i < games.length; i++) {
@@ -95,7 +139,8 @@ function ViewModel() {
 
     }
     this.games(games)
-    document.getElementById('gameList').style.display = 'initial'
+    document.getElementById('gameHeader').style.display = ''
+    document.getElementById('gameList').style.display = ''
     document.getElementById('loading').style.display = 'none'
   };
   this.getDefaultFeed = function (items) {
@@ -141,7 +186,7 @@ function ViewModel() {
       e.url = feedUrl
     }
     if (viewModel.currentPlaybackId) {
-      viewModel.playbackCache[viewModel.currentPlaybackId] = await playerProxy.getCurrentTime()
+      viewModel.playbackCache[viewModel.currentPlaybackId] = viewModel.status().currentTime
     }
     //if live start at 50 minutes from start of live feed
     playerProxy.load(e.url, viewModel.playbackCache[e.mediaPlaybackId] ? viewModel.playbackCache[e.mediaPlaybackId] : (e.mediaState == 'MEDIA_ON' ? 3600 : 0))
@@ -157,7 +202,27 @@ function ViewModel() {
   this.getSchedule = async function () {
     const response = await fetch(this.baseUrl + 'schedule?date=' + this.scheduleDateParam())
     return await response.json()
-  }
+  };
+  this.setAvsSchedule = async function () {
+    const response = await fetch(this.baseUrl + 'schedule?teamId=21&startDate=2019-10-01&endDate=2020-05-01')
+    const games = await response.json()
+    this.avsGames = games.dates.map(d => {
+      return {
+        date: d.date,
+        away: {
+          score: d.games[0].teams.away.score,
+          teamId: d.games[0].teams.away.team.id,
+          name: d.games[0].teams.away.team.name
+        },
+        home: {
+          score: d.games[0].teams.home.score,
+          teamId: d.games[0].teams.home.team.id,
+          name: d.games[0].teams.home.team.name
+
+        }
+      }
+    })
+  };
 }
 var viewModel = new ViewModel()
 ko.applyBindings(viewModel)

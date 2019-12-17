@@ -5,6 +5,8 @@
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
     integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link id="bsdp-css" href="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker3.min.css"
+    rel="stylesheet">
   <link href="stylesheets/style.css" rel="stylesheet">
 </head>
 
@@ -17,7 +19,7 @@
       <span class="fa-stack">
         <span class="fa fa-television fa-stack-2x"></span>
         <strong class="fa-stack-1x cast-num" style="font-size:80%;"
-          data-bind="text: $data, css: {'cast-num-active': $parent.device() == $data}">
+          data-bind="text: $data, css: {'cast-num-active': $parent.status().castDevice == $data}">
         </strong>
       </span>
     </button>
@@ -35,15 +37,20 @@
     <button class='remote-button' data-path='seek/1020'>17m ></button>
 
   </div>
+  <div id="progress" class="text-center loading">
+    <span id="currentTime" data-bind="text: currentTime"></span>
+  </div>
   <div class='full-width'>
     <button class='item remote-button' data-path='play-pause'>play/pause</button>
   </div>
   <div id="loading" class="text-center mt-2 loading">LOADING...<br>
     <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
   </div>
-  <div id="gameHeader" class="text-center mt-2 loading"><a href="#" id="prevDate"><i class="fa fa-arrow-left"
-        aria-hidden="true"></i></a> <span class="ml-5 mr-5" data-bind="text: scheduleDate"></span> <a href="#"
-      id="nextDate"><i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+  <div id="gameHeader" class="text-center mt-2 loading">
+    <input id="datePicker" class="date-picker hidden-date" type="text" class="form-control"><br>
+    <a href="#" id="prevDate"><i class="fa fa-arrow-left" aria-hidden="true"></i></a> <span id="scheduleDate"
+      class="ml-5 mr-5" data-bind="text: scheduleDate"></span> <a href="#" id="nextDate"><i class="fa fa-arrow-right"
+        aria-hidden="true"></i></a>
   </div>
   <div id="gameList" class='full-width game-list' data-bind="foreach: games">
     <div class='card'>
@@ -76,6 +83,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
     integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
     crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
   <script type="text/javascript" src="javascripts/moment.js"></script>
   <script type="text/javascript" src="player-server.js"></script>

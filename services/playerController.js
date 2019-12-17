@@ -46,10 +46,16 @@ const playerController = {
       player.isPlaying() ? player.pause() : player.play();
     })
   },
-  currentTime: async function () {
-    return await pageProvider.page.evaluate(() => {
-      return player.getCurrentTime() + player.getStartTimeOffset()
+  status: async function () {
+    const result = await pageProvider.page.evaluate(() => {
+      return {
+        currentTime: parseInt(player.getCurrentTime() + player.getStartTimeOffset()),
+        isPlaying: player.isPlaying(),
+        duration: player.getDuration()
+      }
     })
+    result.castDevice = castDevice
+    return result
   },
   toggle: async function () {
     await pageProvider.page.click('video', {
@@ -69,17 +75,10 @@ const playerController = {
     await this.toggle()
   },
   cast: async function (n) {
-    // await pageProvider.page.keyboard.down('Alt')
-    // await pageProvider.page.keyboard.press('f')
-    // await pageProvider.page.keyboard.up('Alt')
-    // return
     const result = await execShellCommand(cmdPath + ' ' + n)
     lastDevice = castDevice
     castDevice = n
     if (lastDevice == castDevice) castDevice = -1
-  },
-  device: async function () {
-    return castDevice
   }
 }
 module.exports = playerController
