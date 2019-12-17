@@ -104,18 +104,35 @@ function ViewModel() {
   this.formatUrl = function (urlStr, params) {
     return urlStr + '?' + new URLSearchParams(params).toString()
   };
+
+  this.corsRequest = function (options, printResult) {
+    var cors_api_url = 'https://cors-anywhere.herokuapp.com/';
+
+    var x = new XMLHttpRequest();
+    x.open(options.method, cors_api_url + options.url);
+    x.onload = x.onerror = function () {
+      console.log(x.responseText)
+    };
+    x.send(options.data);
+  }
+
   this.playFeed = async function (e) {
     var self = this;
     //e.preventDefault()
     if (!e.url) {
-      const url = viewModel.formatUrl('https://cors-anywhere.herokuapp.com/http://nhl.freegamez.ga/getM3U8.php', {
-        league: 'nhl',
-        date: viewModel.scheduleDateParam(),
-        id: e.mediaPlaybackId,
-        cdn: 'akc'
-      })
-
-      const response = await fetch(url)
+      // const url = viewModel.formatUrl('https://cors-anywhere.herokuapp.com/http://nhl.freegamez.ga/getM3U8.php', {
+      //   league: 'nhl',
+      //   date: viewModel.scheduleDateParam(),
+      //   id: e.mediaPlaybackId,
+      //   cdn: 'akc'
+      // })
+      const url = 'https://www.responsivepaper.com/media-url?date=' + viewModel.scheduleDateParam() + "&id=" + e.mediaPlaybackId
+      const response = await fetch(url, { mode: 'cors' })
+      //const response = viewModel.corsRequest({ method: 'GET', url })
+      if (response.status != 200) {
+        alert('Error requesting feed: ' + response.status)
+        return
+      }
       const feedUrl = await response.text()
       if (feedUrl.substring(0, 3) == 'Not') {
         alert(feedUrl)

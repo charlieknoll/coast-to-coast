@@ -69,6 +69,10 @@ const playerController = {
     await this.toggle()
   },
   cast: async function (n) {
+    // await pageProvider.page.keyboard.down('Alt')
+    // await pageProvider.page.keyboard.press('f')
+    // await pageProvider.page.keyboard.up('Alt')
+    // return
     const result = await execShellCommand(cmdPath + ' ' + n)
     lastDevice = castDevice
     castDevice = n
