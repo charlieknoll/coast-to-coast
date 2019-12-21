@@ -171,7 +171,7 @@ function ViewModel() {
       //   id: e.mediaPlaybackId,
       //   cdn: 'akc'
       // })
-      const url = 'https://www.responsivepaper.com/media-url?date=' + viewModel.scheduleDateParam() + "&id=" + e.mediaPlaybackId
+      const url = 'https://www.responsivepaper.com/media-url?date=' + viewModel.scheduleDateParam() + "&id=" + e.mediaPlaybackId + "&cdn=l3c"
       const response = await fetch(url, { mode: 'cors' })
       //const response = viewModel.corsRequest({ method: 'GET', url })
       if (response.status != 200) {

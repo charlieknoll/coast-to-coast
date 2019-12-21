@@ -1,6 +1,7 @@
 <html>
 
 <head>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
@@ -8,49 +9,33 @@
   <link id="bsdp-css" href="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker3.min.css"
     rel="stylesheet">
   <link href="stylesheets/style.css" rel="stylesheet">
+
 </head>
 
 <body>
 
   <div id="player" class='full-width'></div>
-  <div id='container' class='remote-container'>
-    <!-- ko foreach: devices -->
-    <button class='remote-button cast' data-bind="attr: {'data-path': 'cast/' + $data}">
-      <span class="fa-stack">
-        <span class="fa fa-television fa-stack-2x"></span>
-        <strong class="fa-stack-1x cast-num" style="font-size:80%;"
-          data-bind="text: $data, css: {'cast-num-active': $parent.status().castDevice == $data}">
-        </strong>
-      </span>
-    </button>
-    <!-- /ko -->
-    <button class='remote-button cast' data-path="reset">
-      <i class="fa fa-refresh" aria-hidden="true"></i>
-    </button>
-    <button class='remote-button' data-path='seek/-15'>15s &lt;</button>
-    <button class='remote-button' data-path='seek/15'>15s ></button>
-    <button class='remote-button' data-path='seek/-120'>2m &lt;</button>
-    <button class='remote-button' data-path='seek/105'>2m ></button>
-    <button class='remote-button' data-path='restart'>Restart</button>
-    <button class='remote-button' data-path='toggle'>Toggle</button>
-    <button class='remote-button' data-path='seek-percentage/100'>LIVE</button>
-    <button class='remote-button' data-path='seek/1020'>17m ></button>
-
-  </div>
   <div id="progress" class="text-center loading">
     <span id="currentTime" data-bind="text: currentTime"></span>
   </div>
-  <div class='full-width'>
-    <button class='item remote-button' data-path='play-pause'>play/pause</button>
+  <div id='container' class='remote-container'>
+
+    <button class='item remote-button' data-path='seek/-10'>10s &lt;</button>
+    <button class='item remote-button' data-path='seek/20'>20s ></button>
+    <button class='item remote-button' data-path='seek/-120'>2m &lt;</button>
+    <button class='item remote-button' data-path='seek/120'>2m ></button>
+    <button class='item remote-button' data-path='seek-percentage/100'>LIVE</button>
+    <button class='item remote-button' data-path='seek/1020'>17m ></button>
   </div>
-  <div id="loading" class="text-center mt-2 loading">LOADING...<br>
-    <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
-  </div>
+  <!--Copy below to remote.html-->
   <div id="gameHeader" class="text-center mt-2 loading">
     <input id="datePicker" class="date-picker hidden-date" type="text" class="form-control"><br>
     <a href="#" id="prevDate"><i class="fa fa-arrow-left" aria-hidden="true"></i></a> <span id="scheduleDate"
       class="ml-5 mr-5" data-bind="text: scheduleDate"></span> <a href="#" id="nextDate"><i class="fa fa-arrow-right"
         aria-hidden="true"></i></a>
+  </div>
+  <div id="loading" class="text-center mt-2 loading">LOADING...<br>
+    <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
   </div>
   <div id="gameList" class='full-width game-list' data-bind="foreach: games">
     <div class='card'>
@@ -74,6 +59,9 @@
       </div>
     </div>
   </div>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+  <script type="text/javascript"
+    src="https://cdn.jsdelivr.net/clappr.level-selector/latest/level-selector.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
     integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
     crossorigin="anonymous"></script>
@@ -84,9 +72,10 @@
     integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
     crossorigin="anonymous"></script>
   <script src="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
+
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
   <script type="text/javascript" src="javascripts/moment.js"></script>
-  <script type="text/javascript" src="player-server.js"></script>
+  <script type="text/javascript" src="player-local-ios.js"></script>
   <script type="text/javascript" src="view-model.js"></script>
 
 </body>

@@ -1,3 +1,3 @@
 const playerController = require('./playerController')
-
-module.exports = { playerController }
+const execShellCommand = require('./utils')
+module.exports = { playerController, execShellCommand }
